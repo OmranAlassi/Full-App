@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:full_app/core/const/app_color.dart';
-import 'package:full_app/shared/custom_btn.dart';
+import 'package:full_app/features/auth/widgets/custom_btn.dart';
 import 'package:full_app/shared/custom_textfield.dart';
 import 'package:gap/gap.dart';
 

@@ -6,6 +6,7 @@ import 'package:full_app/features/home/widgets/card_item.dart';
 import 'package:full_app/features/home/widgets/category_home.dart';
 import 'package:full_app/features/home/widgets/search_field.dart';
 import 'package:full_app/features/home/widgets/user_header.dart';
+import 'package:full_app/features/product/views/product_details_view.dart';
 import 'package:full_app/shared/custom_text.dart';
 import 'package:gap/gap.dart';
 
@@ -61,17 +62,25 @@ class _HomeViewState extends State<HomeView> {
             SliverPadding(
               padding: EdgeInsets.symmetric(horizontal: 15),
               sliver: SliverGrid(
-                delegate: SliverChildBuilderDelegate(childCount: 6, (
-                  context,
-                  index,
-                ) {
-                  return CardItem(
-                    image: 'assets/splash/image 1.png',
-                    text: 'check',
-                    desc: 'check',
-                    rate: '4.9',
-                  );
-                }),
+                delegate: SliverChildBuilderDelegate(
+                  childCount: 6,
+                  (context, index) => GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (c) {
+                          return ProductDetailsView();
+                        },
+                      ),
+                    ),
+                    child: CardItem(
+                      image: 'assets/splash/image 1.png',
+                      text: 'check',
+                      desc: 'check',
+                      rate: '4.9',
+                    ),
+                  ),
+                ),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 0.85,
