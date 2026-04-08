@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:full_app/features/product/widgets/spicy_slider.dart';
 import 'package:full_app/features/product/widgets/topping_card.dart';
@@ -80,18 +79,18 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                 ),
               ),
 
-              Gap(40),
+              Gap(50),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CustomText(text: 'Total', size: 20),
-                      CustomText(text: '\$18.9', size: 27),
+                      CustomText(text: 'Total', size: 15),
+                      CustomText(text: '\$18.9', size: 24),
                     ],
                   ),
-                  CustomButton(text: 'Add To Cart', onTap: () {}),
+                  CustomButton(text: 'Add To Cart', onTap: () {}, width: 200),
                 ],
               ),
               Gap(100),
