@@ -5,7 +5,7 @@ import 'package:full_app/shared/custom_text.dart';
 import 'package:gap/gap.dart';
 
 class CardItem extends StatelessWidget {
-  CardItem({
+  const CardItem({
     super.key,
     required this.image,
     required this.text,
@@ -22,7 +22,18 @@ class CardItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(image, width: 170),
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Positioned(
+                  right: 0,
+                  left: 0,
+                  bottom: -10,
+                  child: Image.asset('assets/icon/Ellipse 1.png'),
+                ),
+                Center(child: Image.asset(image, width: 120, height: 120)),
+              ],
+            ),
             Gap(10),
             CustomText(text: text, weight: FontWeight.bold),
             CustomText(text: desc),
@@ -30,7 +41,7 @@ class CardItem extends StatelessWidget {
               children: [
                 CustomText(text: '⭐$rate'),
                 Spacer(),
-                Icon(CupertinoIcons.heart_fill, color: AppColor.primary),
+                Icon(CupertinoIcons.heart, color: AppColor.primary),
               ],
             ),
           ],

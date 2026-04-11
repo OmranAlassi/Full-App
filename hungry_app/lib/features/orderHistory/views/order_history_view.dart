@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:full_app/core/const/app_color.dart';
 import 'package:full_app/shared/custom_button.dart';
 import 'package:full_app/shared/custom_text.dart';
 import 'package:gap/gap.dart';
@@ -35,19 +34,21 @@ class OrderHistoryView extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Image.asset('assets/splash/Group 31.png'),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomText(
-                              text: 'Hamburger',
-                              weight: FontWeight.bold,
-                            ),
-                            CustomText(text: 'Qty :x3'),
-                            CustomText(
-                              text: 'price :20\$',
-                              weight: FontWeight.bold,
-                            ),
-                          ],
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomText(
+                                text: 'Hamburger',
+                                weight: FontWeight.bold,
+                              ),
+                              CustomText(text: 'Qty :x3'),
+                              CustomText(
+                                text: 'price :20\$',
+                                weight: FontWeight.bold,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

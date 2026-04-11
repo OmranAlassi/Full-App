@@ -1,13 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:full_app/core/const/app_color.dart';
 import 'package:full_app/features/home/widgets/card_item.dart';
 import 'package:full_app/features/home/widgets/category_home.dart';
 import 'package:full_app/features/home/widgets/search_field.dart';
 import 'package:full_app/features/home/widgets/user_header.dart';
 import 'package:full_app/features/product/views/product_details_view.dart';
-import 'package:full_app/shared/custom_text.dart';
+
 import 'package:gap/gap.dart';
 
 class HomeView extends StatefulWidget {
