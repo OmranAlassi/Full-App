@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:full_app/core/const/app_color.dart';
 import 'package:full_app/shared/custom_text.dart';
 
 class ToppingCard extends StatelessWidget {
@@ -38,7 +39,7 @@ class ToppingCard extends StatelessWidget {
               right: 0,
               height: 37,
               child: Container(
-                color: const Color(0xFF3C2F2F),
+                color: AppColor.primary,
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

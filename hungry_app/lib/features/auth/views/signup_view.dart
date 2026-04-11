@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:full_app/core/const/app_color.dart';
 import 'package:full_app/features/auth/views/login_view.dart';
-import 'package:full_app/features/auth/widgets/custom_btn.dart';
+import 'package:full_app/shared/custom_btn.dart';
+import 'package:full_app/root.dart';
 import 'package:full_app/shared/custom_text.dart';
 import 'package:full_app/shared/custom_textfield.dart';
 import 'package:gap/gap.dart';
@@ -75,6 +76,8 @@ class SignupView extends StatelessWidget {
                         // ),
                         Gap(20),
                         CustomAuthBtn(
+                          color: Colors.transparent,
+                          textColor: Colors.white,
                           text: 'Sign Up',
                           onTap: () {
                             if (formKey.currentState!.validate()) {}
@@ -82,9 +85,9 @@ class SignupView extends StatelessWidget {
                         ),
                         Gap(10),
                         CustomAuthBtn(
-                          color: Colors.transparent,
+                          color: Colors.white,
                           text: 'Go To Login ?',
-                          textColor: Colors.white,
+                          textColor: AppColor.primary,
                           onTap: () {
                             Navigator.push(
                               context,

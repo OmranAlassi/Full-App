@@ -13,10 +13,10 @@ class CartView extends StatefulWidget {
 
 class _CartViewState extends State<CartView> {
   late List<int> quantities;
-  final int itemCount = 20;
+  final int itemCount = 3;
   @override
   void initState() {
-    quantities = List.generate(20, (_) => 1);
+    quantities = List.generate(3, (_) => 1);
     super.initState();
   }
 
@@ -48,13 +48,16 @@ class _CartViewState extends State<CartView> {
           padding: EdgeInsets.only(bottom: 120, top: 10),
           itemCount: itemCount,
           itemBuilder: (context, index) {
-            return CartItem(
-              image: 'assets/splash/Group 31.png',
-              text: 'Hamburger',
-              desc: 'Hamburger',
-              number: quantities[index],
-              onAdd: () => onAdd(index),
-              onMin: () => onMin(index),
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: CartItem(
+                image: 'assets/splash/Group 31.png',
+                text: 'Hamburger',
+                desc: 'Hamburger',
+                number: quantities[index],
+                onAdd: () => onAdd(index),
+                onMin: () => onMin(index),
+              ),
             );
           },
         ),
@@ -65,6 +68,13 @@ class _CartViewState extends State<CartView> {
         height: 100,
         width: double.infinity,
         decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade800,
+              blurRadius: 20,
+              offset: Offset(0, 0),
+            ),
+          ],
           color: Colors.white,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30),

@@ -36,6 +36,8 @@ class _CustomTextfieldState extends State<CustomTextfield> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      textInputAction: TextInputAction.next,
+      keyboardType: TextInputType.text,
       controller: widget.controller,
       cursorHeight: 20,
       cursorColor: AppColor.primary,
@@ -59,9 +61,9 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white),
         ),
-        hintStyle: TextStyle(color: Colors.white),
+        hintStyle: TextStyle(color: AppColor.primary),
         hintText: widget.hint,
-        fillColor: Colors.transparent,
+        fillColor: Colors.white,
         filled: true,
       ),
     );

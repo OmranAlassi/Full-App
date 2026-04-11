@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:full_app/features/auth/views/login_view.dart';
 import 'package:full_app/features/auth/views/signup_view.dart';
 import 'package:full_app/root.dart';
 import 'package:full_app/splash.dart';
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(scaffoldBackgroundColor: Colors.white),
       // theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-      home: SignupView(),
+      home: LoginView(),
     );
   }
 }

@@ -129,6 +129,7 @@ class _CheckoutViewState extends State<CheckoutView> {
       ),
 
       bottomSheet: Container(
+        
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [

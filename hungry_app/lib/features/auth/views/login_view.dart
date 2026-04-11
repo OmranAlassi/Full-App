@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:full_app/core/const/app_color.dart';
 import 'package:full_app/features/auth/views/signup_view.dart';
-import 'package:full_app/features/auth/widgets/custom_btn.dart';
+import 'package:full_app/shared/custom_btn.dart';
+import 'package:full_app/root.dart';
 import 'package:full_app/shared/custom_text.dart';
 import 'package:full_app/shared/custom_textfield.dart';
 import 'package:gap/gap.dart';
@@ -65,16 +66,18 @@ class LoginView extends StatelessWidget {
                           ),
                           Gap(20),
                           CustomAuthBtn(
+                            color: Colors.transparent,
                             text: 'Login',
+                            textColor: Colors.white,
                             onTap: () {
                               if (formKey.currentState!.validate()) {}
                             },
                           ),
                           Gap(10),
                           CustomAuthBtn(
-                            color: Colors.transparent,
-                            text: 'Go To Sign Up ?',
-                            textColor: Colors.white,
+                            color: Colors.white,
+                            text: 'Create Account ?',
+                            textColor: AppColor.primary,
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -85,6 +88,23 @@ class LoginView extends StatelessWidget {
                                 ),
                               );
                             },
+                          ),
+                          Gap(20),
+                          GestureDetector(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (c) {
+                                  return Root();
+                                },
+                              ),
+                            ),
+                            child: CustomText(
+                              text: 'Continue as a guest ?',
+                              color: Colors.white,
+                              weight: FontWeight.bold,
+                              size: 15,
+                            ),
                           ),
                         ],
                       ),

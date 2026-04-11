@@ -78,22 +78,39 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                   }),
                 ),
               ),
+              Gap(200),
+            ],
+          ),
+        ),
+      ),
 
-              Gap(50),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      bottomSheet: Container(
+        height: 120,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade800,
+              blurRadius: 20,
+              offset: Offset(0, 0),
+            ),
+          ],
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomText(text: 'Total', size: 15),
-                      CustomText(text: '\$18.9', size: 24),
-                    ],
-                  ),
-                  CustomButton(text: 'Add To Cart', onTap: () {}, width: 200),
+                  CustomText(text: 'Total', size: 15),
+                  CustomText(text: '\$18.9', size: 24),
                 ],
               ),
-              Gap(100),
+              CustomButton(text: 'Add To Cart', onTap: () {}, width: 200),
             ],
           ),
         ),

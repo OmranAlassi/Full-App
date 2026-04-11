@@ -32,7 +32,8 @@ class CartItem extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.asset(image),
+                Center(child: Image.asset(image, width: 120, height: 120)),
+                Gap(15),
                 CustomText(text: text, weight: FontWeight.bold),
                 CustomText(text: desc),
               ],
