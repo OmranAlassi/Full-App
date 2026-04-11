@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(scaffoldBackgroundColor: Colors.white),
       // theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-      home: SplashView(),
+      home: SignupView(),
     );
   }
 }

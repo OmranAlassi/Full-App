@@ -38,39 +38,45 @@ class _RootState extends State<Root> {
           color: AppColor.primary,
           borderRadius: BorderRadius.circular(30),
         ),
-        child: BottomNavigationBar(
-          currentIndex: currentScreen,
-          onTap: (value) {
-            setState(() {
-              currentScreen = value;
-            });
-            controller.jumpToPage(currentScreen);
-          },
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.white,
-          // ignore: deprecated_member_use
-          unselectedItemColor: Colors.grey.shade500.withOpacity(0.7),
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+          ),
+          child: BottomNavigationBar(
+            currentIndex: currentScreen,
+            onTap: (value) {
+              setState(() {
+                currentScreen = value;
+              });
+              controller.jumpToPage(currentScreen);
+            },
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: Colors.white,
+            // ignore: deprecated_member_use
+            unselectedItemColor: Colors.grey.shade500.withOpacity(0.7),
 
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.cart),
-              label: 'Cart',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.local_restaurant_sharp),
-              label: 'Order History',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.profile_circled),
-              label: 'Profile',
-            ),
-          ],
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(CupertinoIcons.home),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(CupertinoIcons.cart),
+                label: 'Cart',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.local_restaurant_sharp),
+                label: 'Order History',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(CupertinoIcons.profile_circled),
+                label: 'Profile',
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -3,9 +3,17 @@ import 'package:full_app/core/const/app_color.dart';
 import 'package:full_app/shared/custom_text.dart';
 
 class CustomAuthBtn extends StatelessWidget {
-  const CustomAuthBtn({super.key, this.onTap, required this.text});
+  const CustomAuthBtn({
+    super.key,
+    this.onTap,
+    required this.text,
+    this.color,
+    this.textColor,
+  });
   final void Function()? onTap;
   final String text;
+  final Color? color;
+  final Color? textColor;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -13,8 +21,9 @@ class CustomAuthBtn extends StatelessWidget {
       child: Container(
         height: 55,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: color ?? Colors.white,
           borderRadius: BorderRadius.circular(7),
+          border: Border.all(color: Colors.white),
         ),
         width: double.infinity,
         child: Center(
@@ -22,7 +31,7 @@ class CustomAuthBtn extends StatelessWidget {
             text: text,
             size: 15,
             weight: FontWeight.w500,
-            color: AppColor.primary,
+            color: textColor ?? AppColor.primary,
           ),
         ),
       ),

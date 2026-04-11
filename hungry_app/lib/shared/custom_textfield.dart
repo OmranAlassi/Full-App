@@ -50,7 +50,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         suffixIcon: widget.isPassword
             ? GestureDetector(
                 onTap: _togglepassword,
-                child: Icon(CupertinoIcons.eye),
+                child: Icon(CupertinoIcons.eye, color: Colors.white),
               )
             : null,
         enabledBorder: OutlineInputBorder(
@@ -59,8 +59,9 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white),
         ),
+        hintStyle: TextStyle(color: Colors.white),
         hintText: widget.hint,
-        fillColor: Colors.white,
+        fillColor: Colors.transparent,
         filled: true,
       ),
     );
