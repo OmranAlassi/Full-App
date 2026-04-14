@@ -27,7 +27,7 @@ class AuthRepo {
         final code = response["code"];
         final data = response["data"];
 
-        if (code != 200 && code != 201) {
+        if (code != 200 && code != 201 || data == null) {
           throw ApiError(message: msg ?? "Unknown error");
         }
         final user = UserModel.fromJson(data);
@@ -60,9 +60,14 @@ class AuthRepo {
       if (response is Map<String, dynamic>) {
         final msg = response["message"];
         final code = response["code"];
+        // final coder = int.tryParse(code);
         final data = response["data"];
 
-        if (code != 200 && code != 201) {
+        // if (coder != 200 && coder != 201) {
+        //   throw ApiError(message: msg ?? "Unknown error");
+        // }
+
+        if (code != 200 && code != 201 || data == null) {
           throw ApiError(message: msg ?? "Unknown error");
         }
 

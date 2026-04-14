@@ -4,11 +4,23 @@ import 'package:full_app/core/network/api_error.dart';
 class ApiExceptions {
   static ApiError handleError(DioException error) {
     final statusCode = error.response?.statusCode;
-    final data = error.response?.data;
 
-    if (data is Map<String, dynamic> && data["message"] != null) {
-      return ApiError(message: data["message"], statusCode: statusCode);
+    final data = error.response?.data;
+   
+
+    if (statusCode != null) {
+      if (data is Map<String, dynamic> && data["message"] != null) {
+        return ApiError(message: data["message"], statusCode: statusCode);
+      }
     }
+    
+
+    if (statusCode == 302) {
+      throw ApiError(message: 'This Email Already Taken');
+    }
+
+    print(statusCode);
+    print(data);
 
     switch (error.type) {
       case DioExceptionType.connectionTimeout:

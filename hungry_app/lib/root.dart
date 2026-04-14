@@ -26,51 +26,54 @@ class _RootState extends State<Root> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView(
-        controller: controller,
-        physics: NeverScrollableScrollPhysics(),
-        children: screens,
-      ),
-      bottomNavigationBar: Container(
-        padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: AppColor.primary,
-          borderRadius: BorderRadius.circular(30),
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: PageView(
+          controller: controller,
+          physics: NeverScrollableScrollPhysics(),
+          children: screens,
         ),
-        child: BottomNavigationBar(
-          currentIndex: currentScreen,
-          onTap: (value) {
-            setState(() {
-              currentScreen = value;
-            });
-            controller.jumpToPage(currentScreen);
-          },
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.white,
-          // ignore: deprecated_member_use
-          unselectedItemColor: Colors.grey.shade500.withOpacity(0.7),
+        bottomNavigationBar: Container(
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: AppColor.primary,
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: BottomNavigationBar(
+            currentIndex: currentScreen,
+            onTap: (value) {
+              setState(() {
+                currentScreen = value;
+              });
+              controller.jumpToPage(currentScreen);
+            },
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: Colors.white,
+            // ignore: deprecated_member_use
+            unselectedItemColor: Colors.grey.shade500.withOpacity(0.7),
 
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.cart),
-              label: 'Cart',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.local_restaurant_sharp),
-              label: 'Order History',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.profile_circled),
-              label: 'Profile',
-            ),
-          ],
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(CupertinoIcons.home),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(CupertinoIcons.cart),
+                label: 'Cart',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.local_restaurant_sharp),
+                label: 'Order History',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(CupertinoIcons.profile_circled),
+                label: 'Profile',
+              ),
+            ],
+          ),
         ),
       ),
     );

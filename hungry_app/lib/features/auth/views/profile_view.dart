@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:full_app/core/const/app_color.dart';
+import 'package:full_app/features/auth/views/login_view.dart';
 import 'package:full_app/features/auth/widgets/custom_user_txt_field.dart';
 import 'package:full_app/shared/custom_text.dart';
 import 'package:gap/gap.dart';
@@ -145,19 +146,31 @@ class _ProfileViewState extends State<ProfileView> {
                 ),
               ),
 
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: AppColor.primary),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  spacing: 5,
-                  children: [
-                    CustomText(text: 'Logout', color: AppColor.primary),
-                    Icon(Icons.logout, color: AppColor.primary),
-                  ],
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (c) {
+                        return LoginView();
+                      },
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: AppColor.primary),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    spacing: 5,
+                    children: [
+                      CustomText(text: 'Logout', color: AppColor.primary),
+                      Icon(Icons.logout, color: AppColor.primary),
+                    ],
+                  ),
                 ),
               ),
             ],
