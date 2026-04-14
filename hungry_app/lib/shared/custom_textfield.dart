@@ -52,7 +52,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         suffixIcon: widget.isPassword
             ? GestureDetector(
                 onTap: _togglepassword,
-                child: Icon(CupertinoIcons.eye, color: Colors.white),
+                child: Icon(CupertinoIcons.eye, color: Colors.black),
               )
             : null,
         enabledBorder: OutlineInputBorder(

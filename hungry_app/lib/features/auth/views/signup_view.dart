@@ -7,16 +7,21 @@ import 'package:full_app/shared/custom_text.dart';
 import 'package:full_app/shared/custom_textfield.dart';
 import 'package:gap/gap.dart';
 
-class SignupView extends StatelessWidget {
+class SignupView extends StatefulWidget {
   const SignupView({super.key});
 
   @override
+  State<SignupView> createState() => _SignupViewState();
+}
+
+class _SignupViewState extends State<SignupView> {
+  final GlobalKey<FormState> formKey = .new();
+  TextEditingController emailController = .new();
+  TextEditingController nameController = .new();
+  TextEditingController passController = .new();
+  // TextEditingController confirmPassController = .new();
+  @override
   Widget build(BuildContext context) {
-    final GlobalKey<FormState> formKey = .new();
-    TextEditingController emailController = .new();
-    TextEditingController nameController = .new();
-    TextEditingController passController = .new();
-    // TextEditingController confirmPassController = .new();
     return Scaffold(
       body: Center(
         child: Form(

@@ -1,21 +1,72 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:full_app/core/const/app_color.dart';
+import 'package:full_app/core/network/api_error.dart';
+import 'package:full_app/features/auth/data/auth_repo.dart';
 import 'package:full_app/features/auth/views/signup_view.dart';
 import 'package:full_app/shared/custom_btn.dart';
 import 'package:full_app/root.dart';
+import 'package:full_app/shared/custom_snack_bar.dart';
 import 'package:full_app/shared/custom_text.dart';
 import 'package:full_app/shared/custom_textfield.dart';
 import 'package:gap/gap.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
   @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+  TextEditingController emailController = .new();
+  TextEditingController passContrller = .new();
+  final GlobalKey<FormState> formKey = .new();
+
+  bool isLoading = false;
+
+  AuthRepo authRepo = AuthRepo();
+  Future<void> login() async {
+    if (formKey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+      try {
+        final user = await authRepo.login(
+          emailController.text.trim(),
+          passContrller.text.trim(),
+        );
+        if (user != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (c) {
+                return Root();
+              },
+            ),
+          );
+        }
+        setState(() {
+          isLoading = false;
+        });
+      } catch (e) {
+        setState(() {
+          isLoading = false;
+        });
+        String errorMsg = 'unhandied error in login';
+        if (e is ApiError) {
+          errorMsg = e.message;
+        }
+        ScaffoldMessenger.of(context).showSnackBar(customSnackBar(errorMsg));
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    TextEditingController emailController = .new();
-    TextEditingController passContrller = .new();
-    final GlobalKey<FormState> formKey = .new();
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -65,14 +116,14 @@ class LoginView extends StatelessWidget {
                             controller: passContrller,
                           ),
                           Gap(20),
-                          CustomAuthBtn(
-                            color: Colors.transparent,
-                            text: 'Login',
-                            textColor: Colors.white,
-                            onTap: () {
-                              if (formKey.currentState!.validate()) {}
-                            },
-                          ),
+                          isLoading
+                              ? CupertinoActivityIndicator(color: Colors.white)
+                              : CustomAuthBtn(
+                                  color: Colors.transparent,
+                                  text: 'Login',
+                                  textColor: Colors.white,
+                                  onTap: login,
+                                ),
                           Gap(10),
                           CustomAuthBtn(
                             color: Colors.white,

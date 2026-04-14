@@ -52,7 +52,7 @@ class _RootState extends State<Root> {
           selectedItemColor: Colors.white,
           // ignore: deprecated_member_use
           unselectedItemColor: Colors.grey.shade500.withOpacity(0.7),
-        
+
           items: [
             BottomNavigationBarItem(
               icon: Icon(CupertinoIcons.home),
