@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:full_app/core/const/app_color.dart';
 import 'package:full_app/shared/custom_text.dart';

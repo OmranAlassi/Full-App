@@ -66,6 +66,13 @@ class _LoginViewState extends State<LoginView> {
   }
 
   @override
+  void initState() {
+    emailController.text = 'fffl@gmail.com';
+    passContrller.text = '12345678';
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),

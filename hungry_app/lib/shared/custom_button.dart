@@ -4,7 +4,7 @@ import 'package:full_app/core/const/app_color.dart';
 import 'package:full_app/shared/custom_text.dart';
 
 class CustomButton extends StatelessWidget {
-  CustomButton({
+  const CustomButton({
     super.key,
     this.onTap,
     required this.text,

@@ -3,7 +3,7 @@ import 'package:full_app/core/const/app_color.dart';
 import 'package:full_app/shared/custom_text.dart';
 
 class CategoryHome extends StatefulWidget {
-  CategoryHome({
+  const CategoryHome({
     super.key,
     required this.selectedIndex,
     required this.category,

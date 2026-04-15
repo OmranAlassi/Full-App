@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: body_might_complete_normally_nullable, deprecated_member_use
 
 import 'package:dio/dio.dart';
 import 'package:full_app/core/network/api_error.dart';
@@ -85,7 +85,18 @@ class AuthRepo {
       throw ApiError(message: e.toString());
     }
   }
+
   //Get Profile data
+  Future<UserModel?> getProfileData() async {
+    try {
+      final response = await apiService.get('/profile');
+      return UserModel.fromJson(response["data"]);
+    } on DioError catch (e) {
+      ApiExceptions.handleError(e);
+    } catch (e) {
+      throw ApiError(message: e.toString());
+    }
+  }
 
   //Update profile data
 

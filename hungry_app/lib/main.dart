@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:full_app/features/auth/views/login_view.dart';
 import 'package:full_app/splash.dart';
 
 void main() async {

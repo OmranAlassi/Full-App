@@ -1,11 +1,22 @@
+// ignore_for_file: avoid_print
+
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:full_app/core/const/app_color.dart';
+import 'package:full_app/core/network/api_error.dart';
+import 'package:full_app/features/auth/data/auth_repo.dart';
+import 'package:full_app/features/auth/data/user_model.dart';
 import 'package:full_app/features/auth/views/login_view.dart';
 import 'package:full_app/features/auth/widgets/custom_user_txt_field.dart';
+import 'package:full_app/shared/custom_button.dart';
+import 'package:full_app/shared/custom_snack_bar.dart';
 import 'package:full_app/shared/custom_text.dart';
 import 'package:gap/gap.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -18,162 +29,249 @@ class _ProfileViewState extends State<ProfileView> {
   final TextEditingController nameController = .new();
   final TextEditingController emailController = .new();
   final TextEditingController addressController = .new();
+  final TextEditingController visaController = .new();
+
+  AuthRepo authRepo = AuthRepo();
+  UserModel? userModel;
+  String? selectedImage;
+
+  Future<void> getProfileData() async {
+    try {
+      final user = await authRepo.getProfileData();
+      setState(() {
+        userModel = user;
+      });
+    } catch (e) {
+      String errorMsg = "Error in Profile";
+      if (e is ApiError) {
+        errorMsg = e.message;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(customSnackBar(errorMsg));
+    }
+  }
+
+  Future<void> pickImage() async {
+    final pickdImage = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
+    if (pickdImage != null) {
+      setState(() {
+        selectedImage = pickdImage.path;
+      });
+    }
+  }
+
   @override
   void initState() {
-    nameController.text = 'Omran AlAssi';
-    emailController.text = 'omranalassi3@gmail.com';
-    addressController.text = '55 Syria';
+    getProfileData().then((value) {
+      // print(userModel?.name);
+      // print(userModel?.email);
+      nameController.text = userModel?.name ?? 'Omran AlAssi';
+      emailController.text = userModel?.email ?? 'omranalassi3@gmail.com';
+      addressController.text = userModel?.address ?? '55 Syria';
+    });
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return RefreshIndicator(
+      displacement: 40,
+      color: Colors.white,
       backgroundColor: AppColor.primary,
-      appBar: AppBar(
-        backgroundColor: AppColor.primary,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: Icon(Icons.arrow_back, color: Colors.white),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-            child: SvgPicture.asset('assets/icon/Group.svg', width: 18),
-          ),
-        ],
-      ),
-
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Center(
-                child: Container(
-                  height: 120,
-                  width: 120,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/icon/download.png'),
-                    ),
-                    color: Colors.grey.shade400,
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(width: 5, color: Colors.white),
-                  ),
+      onRefresh: () => getProfileData(),
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            leading: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Icon(Icons.arrow_back, color: Colors.black),
+            ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                child: SvgPicture.asset(
+                  'assets/icon/Group.svg',
+                  width: 18,
+                  color: Colors.black,
                 ),
               ),
-              Gap(30),
-
-              CustomUserTxtField(controller: nameController, label: 'Name'),
-              Gap(25),
-              CustomUserTxtField(controller: emailController, label: 'Email'),
-              Gap(25),
-              CustomUserTxtField(
-                controller: addressController,
-                label: 'Address',
-              ),
-              Gap(20),
-              Divider(),
-              Gap(10),
-              ListTile(
-                // onTap: () => setState(() => selectedMethod = 'Visa'),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadiusGeometry.circular(12),
-                ),
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 16,
-                ),
-                tileColor: Color(0XffF3F4F6),
-                leading: Image.asset('assets/icon/image 13.png', width: 50),
-                title: CustomText(text: 'Debit card', color: Color(0Xff3C2F2F)),
-                subtitle: CustomText(
-                  text: '3566 **** **** 0505',
-                  color: Color(0Xff808080),
-                ),
-                trailing: CustomText(text: 'Default', size: 12),
-                // trailing: Radio<String>(
-                //   activeColor: Colors.grey.shade500,
-                //   value: 'Visa',
-                //   // ignore: deprecated_member_use
-                //   groupValue: 'Visa',
-                //   // ignore: deprecated_member_use
-                //   onChanged: (value) {},
-                // ),
-              ),
-              Gap(100),
             ],
           ),
-        ),
-      ),
 
-      bottomSheet: Container(
-        height: 80,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          ),
-          boxShadow: [
-            BoxShadow(
-              blurRadius: 20,
-              offset: Offset(0, 1),
-              color: Colors.grey.shade800,
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                decoration: BoxDecoration(
-                  color: AppColor.primary,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  spacing: 5,
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: SingleChildScrollView(
+              child: Skeletonizer(
+                enabled: userModel != null,
+                child: Column(
                   children: [
-                    CustomText(text: 'Edit Profile', color: Colors.white),
-                    Icon(CupertinoIcons.pencil, color: Colors.white),
+                    Center(
+                      child: Container(
+                        height: 120,
+                        width: 120,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: FileImage(
+                              File(selectedImage ?? "assets/icon/download.png"),
+                            ),
+                            fit: BoxFit.cover,
+                          ),
+                          color: Colors.grey.shade400,
+                          border: Border.all(width: 3, color: AppColor.primary),
+                        ),
+                      ),
+                    ),
+                    Gap(30),
+                    CustomButton(
+                      text: 'Upload image',
+                      width: 150,
+                      height: 50,
+                      onTap: pickImage,
+                    ),
+                    Gap(25),
+                    CustomUserTxtField(
+                      controller: nameController,
+                      label: 'Name',
+                      color: AppColor.primary,
+                    ),
+                    Gap(25),
+                    CustomUserTxtField(
+                      controller: emailController,
+                      label: 'Email',
+                      color: AppColor.primary,
+                    ),
+                    Gap(25),
+                    CustomUserTxtField(
+                      controller: addressController,
+                      label: 'Address',
+                      color: AppColor.primary,
+                    ),
+                    Gap(20),
+                    Divider(color: AppColor.primary),
+                    Gap(10),
+                    userModel?.visa == null
+                        ? CustomUserTxtField(
+                            keyboardType: TextInputType.number,
+                            controller: visaController,
+                            label: 'Add Visa Card',
+                            color: AppColor.primary,
+                          )
+                        : ListTile(
+                            // onTap: () => setState(() => selectedMethod = 'Visa'),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadiusGeometry.circular(12),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: 8,
+                              horizontal: 16,
+                            ),
+                            tileColor: Color(0XffF3F4F6),
+                            leading: Image.asset(
+                              'assets/icon/image 13.png',
+                              width: 50,
+                            ),
+                            title: CustomText(
+                              text: 'Debit card',
+                              color: Color(0Xff3C2F2F),
+                            ),
+                            subtitle: CustomText(
+                              text: userModel?.visa ?? '3566 **** **** 0505',
+                              color: Color(0Xff808080),
+                            ),
+                            trailing: CustomText(text: 'Default', size: 12),
+                            // trailing: Radio<String>(
+                            //   activeColor: Colors.grey.shade500,
+                            //   value: 'Visa',
+                            //   // ignore: deprecated_member_use
+                            //   groupValue: 'Visa',
+                            //   // ignore: deprecated_member_use
+                            //   onChanged: (value) {},
+                            // ),
+                          ),
+
+                    Gap(400),
                   ],
                 ),
               ),
+            ),
+          ),
 
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (c) {
-                        return LoginView();
-                      },
-                    ),
-                  );
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: AppColor.primary),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    spacing: 5,
-                    children: [
-                      CustomText(text: 'Logout', color: AppColor.primary),
-                      Icon(Icons.logout, color: AppColor.primary),
-                    ],
-                  ),
-                ),
+          bottomSheet: Container(
+            height: 80,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30),
+                topRight: Radius.circular(30),
               ),
-            ],
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 20,
+                  offset: Offset(0, 1),
+                  color: Colors.grey.shade800,
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                    decoration: BoxDecoration(
+                      color: AppColor.primary,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      spacing: 5,
+                      children: [
+                        CustomText(text: 'Edit Profile', color: Colors.white),
+                        Icon(CupertinoIcons.pencil, color: Colors.white),
+                      ],
+                    ),
+                  ),
+
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (c) {
+                            return LoginView();
+                          },
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 30,
+                        vertical: 20,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: AppColor.primary),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        spacing: 5,
+                        children: [
+                          CustomText(text: 'Logout', color: AppColor.primary),
+                          Icon(Icons.logout, color: AppColor.primary),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
