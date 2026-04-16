@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:full_app/core/const/app_color.dart';
+import 'package:full_app/features/auth/data/auth_repo.dart';
 import 'package:full_app/features/auth/views/login_view.dart';
+import 'package:full_app/root.dart';
 import 'package:gap/gap.dart';
 
 class SplashView extends StatefulWidget {
@@ -13,6 +15,34 @@ class SplashView extends StatefulWidget {
 
 class _SplashViewState extends State<SplashView> {
   double opacity = 0;
+
+  AuthRepo authRepo = AuthRepo();
+  Future<void> checkLogin() async {
+    try {
+      final user = await authRepo.authLogin();
+      if (!mounted) return;
+
+      if (authRepo.isGuest) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (c) => Root()),
+        );
+      } else if (user != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (c) => Root()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (c) => LoginView()),
+        );
+      }
+    } catch (e) {
+      print('error');
+    }
+  }
+
   @override
   void initState() {
     Future.delayed(Duration(milliseconds: 200), () {
@@ -21,14 +51,7 @@ class _SplashViewState extends State<SplashView> {
       });
     });
 
-    Future.delayed(
-      Duration(seconds: 2),
-      // ignore: use_build_context_synchronously
-      () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (c) => LoginView()),
-      ),
-    );
+    Future.delayed(Duration(seconds: 2), checkLogin);
     super.initState();
   }
 

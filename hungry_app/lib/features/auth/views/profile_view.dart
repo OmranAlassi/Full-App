@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_print
 
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -34,6 +33,20 @@ class _ProfileViewState extends State<ProfileView> {
   AuthRepo authRepo = AuthRepo();
   UserModel? userModel;
   String? selectedImage;
+  bool isLoading = false;
+  bool isGuest = false;
+
+  Future<void> autoLogin() async {
+    final user = await authRepo.authLogin();
+    setState(() {
+      isGuest = authRepo.isGuest;
+    });
+    if (user != null) {
+      setState(() {
+        userModel = user;
+      });
+    }
+  }
 
   Future<void> getProfileData() async {
     try {
@@ -50,6 +63,53 @@ class _ProfileViewState extends State<ProfileView> {
     }
   }
 
+  Future<void> updateProfileData() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      final user = await authRepo.updateProfileData(
+        name: nameController.text.trim(),
+        email: emailController.text.trim(),
+        address: addressController.text.trim(),
+        image: selectedImage,
+        visa: visaController.text.trim(),
+      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(customSnackBar("Profile updated Successfully"));
+      setState(() {
+        isLoading = false;
+      });
+
+      setState(() {
+        userModel = user;
+      });
+      await getProfileData();
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      String errorMsg = "Error in Profile";
+      if (e is ApiError) {
+        errorMsg = e.message;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(customSnackBar(errorMsg));
+    }
+  }
+
+  Future<void> logout() async {
+    await authRepo.logout();
+    await Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return LoginView();
+        },
+      ),
+    );
+  }
+
   Future<void> pickImage() async {
     final pickdImage = await ImagePicker().pickImage(
       source: ImageSource.gallery,
@@ -63,218 +123,259 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   void initState() {
+    autoLogin();
     getProfileData().then((value) {
-      // print(userModel?.name);
-      // print(userModel?.email);
+      print(userModel?.name);
+      print(userModel?.email);
       nameController.text = userModel?.name ?? 'Omran AlAssi';
       emailController.text = userModel?.email ?? 'omranalassi3@gmail.com';
       addressController.text = userModel?.address ?? '55 Syria';
     });
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      displacement: 40,
-      color: Colors.white,
-      backgroundColor: AppColor.primary,
-      onRefresh: () => getProfileData(),
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            leading: GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: Icon(Icons.arrow_back, color: Colors.black),
+    if (!isGuest) {
+      return RefreshIndicator(
+        displacement: 40,
+        color: Colors.white,
+        backgroundColor: AppColor.primary,
+        onRefresh: () => getProfileData(),
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              leading: GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Icon(Icons.arrow_back, color: Colors.black),
+              ),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 0,
+                  ),
+                  child: SvgPicture.asset(
+                    'assets/icon/Group.svg',
+                    width: 18,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
             ),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                child: SvgPicture.asset(
-                  'assets/icon/Group.svg',
-                  width: 18,
-                  color: Colors.black,
+
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: SingleChildScrollView(
+                child: Skeletonizer(
+                  enabled: userModel == null,
+
+                  child: Column(
+                    children: [
+                      Center(
+                        child: Container(
+                          height: 120,
+                          width: 120,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            // image: DecorationImage(
+                            //   image: FileImage(
+                            //     File(selectedImage ?? "assets/icon/download.png"),
+                            //   ),
+                            //   fit: BoxFit.cover,
+                            // ),
+                            color: Colors.grey.shade400,
+                            border: Border.all(
+                              width: 2,
+                              color: AppColor.primary,
+                            ),
+                          ),
+                          clipBehavior: Clip.antiAlias,
+                          child: selectedImage != null
+                              ? Image.file(
+                                  File(selectedImage!),
+                                  fit: BoxFit.cover,
+                                )
+                              : (userModel?.image != null &&
+                                    userModel!.image!.isNotEmpty)
+                              ? Image.network(
+                                  userModel!.image!,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, builder) =>
+                                      Icon(
+                                        Icons.person,
+                                        color: Colors.white,
+                                        size: 70,
+                                      ),
+                                )
+                              : Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                  size: 70,
+                                ),
+                        ),
+                      ),
+
+                      Gap(30),
+                      CustomButton(
+                        text: 'Change image',
+                        width: 150,
+                        height: 50,
+                        onTap: pickImage,
+                      ),
+                      Gap(25),
+                      CustomUserTxtField(
+                        controller: nameController,
+                        label: 'Name',
+                        color: AppColor.primary,
+                      ),
+                      Gap(25),
+                      CustomUserTxtField(
+                        controller: emailController,
+                        label: 'Email',
+                        color: AppColor.primary,
+                      ),
+                      Gap(25),
+                      CustomUserTxtField(
+                        controller: addressController,
+                        label: 'Address',
+                        color: AppColor.primary,
+                      ),
+                      Gap(20),
+                      Divider(color: AppColor.primary),
+                      Gap(10),
+                      userModel?.visa == null
+                          ? CustomUserTxtField(
+                              keyboardType: TextInputType.number,
+                              controller: visaController,
+                              label: 'Add Visa Card',
+                              color: AppColor.primary,
+                            )
+                          : ListTile(
+                              // onTap: () => setState(() => selectedMethod = 'Visa'),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadiusGeometry.circular(12),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(
+                                vertical: 8,
+                                horizontal: 16,
+                              ),
+                              tileColor: Color(0XffF3F4F6),
+                              leading: Image.asset(
+                                'assets/icon/image 13.png',
+                                width: 50,
+                              ),
+                              title: CustomText(
+                                text: 'Debit card',
+                                color: Color(0Xff3C2F2F),
+                              ),
+                              subtitle: CustomText(
+                                text: userModel?.visa ?? '3566 **** **** 0505',
+                                color: Color(0Xff808080),
+                              ),
+                              trailing: CustomText(text: 'Default', size: 12),
+                              // trailing: Radio<String>(
+                              //   activeColor: Colors.grey.shade500,
+                              //   value: 'Visa',
+                              //   // ignore: deprecated_member_use
+                              //   groupValue: 'Visa',
+                              //   // ignore: deprecated_member_use
+                              //   onChanged: (value) {},
+                              // ),
+                            ),
+
+                      Gap(400),
+                    ],
+                  ),
                 ),
               ),
-            ],
-          ),
+            ),
 
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: SingleChildScrollView(
-              child: Skeletonizer(
-                enabled: userModel != null,
-                child: Column(
+            bottomSheet: Container(
+              height: 80,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 20,
+                    offset: Offset(0, 1),
+                    color: Colors.grey.shade800,
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Center(
-                      child: Container(
-                        height: 120,
-                        width: 120,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: FileImage(
-                              File(selectedImage ?? "assets/icon/download.png"),
+                    isLoading
+                        ? CupertinoActivityIndicator()
+                        : GestureDetector(
+                            onTap: updateProfileData,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 30,
+                                vertical: 20,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColor.primary,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                spacing: 5,
+                                children: [
+                                  CustomText(
+                                    text: 'Edit Profile',
+                                    color: Colors.white,
+                                  ),
+                                  Icon(
+                                    CupertinoIcons.pencil,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
                             ),
-                            fit: BoxFit.cover,
                           ),
-                          color: Colors.grey.shade400,
-                          border: Border.all(width: 3, color: AppColor.primary),
+
+                    GestureDetector(
+                      onTap: logout,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 20,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: AppColor.primary),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          spacing: 5,
+                          children: [
+                            CustomText(text: 'Logout', color: AppColor.primary),
+                            Icon(Icons.logout, color: AppColor.primary),
+                          ],
                         ),
                       ),
                     ),
-                    Gap(30),
-                    CustomButton(
-                      text: 'Upload image',
-                      width: 150,
-                      height: 50,
-                      onTap: pickImage,
-                    ),
-                    Gap(25),
-                    CustomUserTxtField(
-                      controller: nameController,
-                      label: 'Name',
-                      color: AppColor.primary,
-                    ),
-                    Gap(25),
-                    CustomUserTxtField(
-                      controller: emailController,
-                      label: 'Email',
-                      color: AppColor.primary,
-                    ),
-                    Gap(25),
-                    CustomUserTxtField(
-                      controller: addressController,
-                      label: 'Address',
-                      color: AppColor.primary,
-                    ),
-                    Gap(20),
-                    Divider(color: AppColor.primary),
-                    Gap(10),
-                    userModel?.visa == null
-                        ? CustomUserTxtField(
-                            keyboardType: TextInputType.number,
-                            controller: visaController,
-                            label: 'Add Visa Card',
-                            color: AppColor.primary,
-                          )
-                        : ListTile(
-                            // onTap: () => setState(() => selectedMethod = 'Visa'),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadiusGeometry.circular(12),
-                            ),
-                            contentPadding: EdgeInsets.symmetric(
-                              vertical: 8,
-                              horizontal: 16,
-                            ),
-                            tileColor: Color(0XffF3F4F6),
-                            leading: Image.asset(
-                              'assets/icon/image 13.png',
-                              width: 50,
-                            ),
-                            title: CustomText(
-                              text: 'Debit card',
-                              color: Color(0Xff3C2F2F),
-                            ),
-                            subtitle: CustomText(
-                              text: userModel?.visa ?? '3566 **** **** 0505',
-                              color: Color(0Xff808080),
-                            ),
-                            trailing: CustomText(text: 'Default', size: 12),
-                            // trailing: Radio<String>(
-                            //   activeColor: Colors.grey.shade500,
-                            //   value: 'Visa',
-                            //   // ignore: deprecated_member_use
-                            //   groupValue: 'Visa',
-                            //   // ignore: deprecated_member_use
-                            //   onChanged: (value) {},
-                            // ),
-                          ),
-
-                    Gap(400),
                   ],
                 ),
               ),
             ),
           ),
-
-          bottomSheet: Container(
-            height: 80,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(30),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 20,
-                  offset: Offset(0, 1),
-                  color: Colors.grey.shade800,
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                    decoration: BoxDecoration(
-                      color: AppColor.primary,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      spacing: 5,
-                      children: [
-                        CustomText(text: 'Edit Profile', color: Colors.white),
-                        Icon(CupertinoIcons.pencil, color: Colors.white),
-                      ],
-                    ),
-                  ),
-
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (c) {
-                            return LoginView();
-                          },
-                        ),
-                      );
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 30,
-                        vertical: 20,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: AppColor.primary),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        spacing: 5,
-                        children: [
-                          CustomText(text: 'Logout', color: AppColor.primary),
-                          Icon(Icons.logout, color: AppColor.primary),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
         ),
-      ),
-    );
+      );
+    } else if (isGuest) {
+      return Center(child: CustomText(text: 'Guest Mode'));
+    }
+    return SizedBox();
   }
 }
