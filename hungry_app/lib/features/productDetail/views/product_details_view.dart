@@ -1,6 +1,11 @@
+import 'dart:ffi';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:full_app/features/product/widgets/spicy_slider.dart';
-import 'package:full_app/features/product/widgets/topping_card.dart';
+import 'package:full_app/features/home/data/model/topping_model.dart';
+import 'package:full_app/features/home/data/repo/product_repo.dart';
+import 'package:full_app/features/productDetail/widgets/spicy_slider.dart';
+import 'package:full_app/features/productDetail/widgets/topping_card.dart';
 import 'package:full_app/shared/custom_button.dart';
 import 'package:full_app/shared/custom_text.dart';
 import 'package:gap/gap.dart';
@@ -14,6 +19,34 @@ class ProductDetailsView extends StatefulWidget {
 
 class _ProductDetailsViewState extends State<ProductDetailsView> {
   double value = 0.5;
+  int? selectedToppingIndex;
+
+  ProductRepo productRepo = ProductRepo();
+
+  List<ToppingModel>? toppings;
+  List<ToppingModel>? options;
+
+  Future<void> getToppings() async {
+    final res = await productRepo.getToppings();
+    setState(() {
+      toppings = res.cast<ToppingModel>();
+    });
+  }
+
+  Future<void> getOptions() async {
+    final res = await productRepo.getOptions();
+    setState(() {
+      options = res.cast<ToppingModel>();
+    });
+  }
+
+  @override
+  void initState() {
+    getToppings();
+    getOptions();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,13 +80,22 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                 clipBehavior: Clip.none,
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: List.generate(4, (index) {
+                  children: List.generate(toppings?.length ?? 4, (index) {
+                    final isSelected = selectedToppingIndex == index;
+                    final topping = toppings?[index];
+                    if (topping == null) {
+                      return CupertinoActivityIndicator();
+                    }
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: ToppingCard(
-                        imageUrl: 'assets/splash/Group 31.png',
-                        name: 'Tomato',
-                        onAdd: () {},
+                        imageUrl: topping.image,
+                        name: topping.name,
+                        onAdd: () {
+                          setState(() {
+                            selectedToppingIndex = index;
+                          });
+                        },
                       ),
                     );
                   }),
@@ -66,13 +108,22 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                 clipBehavior: Clip.none,
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: List.generate(4, (index) {
+                  children: List.generate(options?.length ?? 4, (index) {
+                    final isSelected = selectedToppingIndex == index;
+                    final option = options?[index];
+                    if (option == null) {
+                      return CupertinoActivityIndicator();
+                    }
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: ToppingCard(
-                        imageUrl: 'assets/splash/Group 31.png',
-                        name: 'Tomato',
-                        onAdd: () {},
+                        imageUrl: option.image,
+                        name: option.name,
+                        onAdd: () {
+                          setState(() {
+                            selectedToppingIndex = index;
+                          });
+                        },
                       ),
                     );
                   }),
