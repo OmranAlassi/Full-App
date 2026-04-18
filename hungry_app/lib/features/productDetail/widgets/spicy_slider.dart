@@ -3,15 +3,27 @@ import 'package:full_app/core/const/app_color.dart';
 import 'package:full_app/shared/custom_text.dart';
 import 'package:gap/gap.dart';
 
-class SpicySlider extends StatelessWidget {
-  const SpicySlider({super.key, required this.value, required this.onChanged});
+class SpicySlider extends StatefulWidget {
+  const SpicySlider({
+    super.key,
+    required this.value,
+    required this.onChanged,
+    required this.image,
+  });
   final double value;
   final ValueChanged<double> onChanged;
+  final String image;
+
+  @override
+  State<SpicySlider> createState() => _SpicySliderState();
+}
+
+class _SpicySliderState extends State<SpicySlider> {
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Image.asset('assets/detail/pngwing 12.png', height: 250),
+        Image.network(widget.image, width: 120, fit: BoxFit.cover),
         Spacer(),
         Column(
           children: [
@@ -22,8 +34,8 @@ class SpicySlider extends StatelessWidget {
             Slider(
               min: 0,
               max: 1,
-              value: value,
-              onChanged: onChanged,
+              value: widget.value,
+              onChanged: widget.onChanged,
               inactiveColor: Colors.grey.shade300,
               activeColor: AppColor.primary,
             ),
