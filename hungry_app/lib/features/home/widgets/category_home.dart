@@ -10,6 +10,7 @@ class CategoryHome extends StatefulWidget {
   });
   final int selectedIndex;
   final List category;
+
   @override
   State<CategoryHome> createState() => _CategoryHomeState();
 }

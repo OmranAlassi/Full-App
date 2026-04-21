@@ -60,4 +60,15 @@ class ProductRepo {
   }
 
   //category
+  Future<List<ProductModel?>> getCategory() async {
+    try {
+      final response = await apiService.get('/category');
+      return (response['data'] as List)
+          .map((category) => ProductModel.fromJson(category))
+          .toList();
+    } catch (e) {
+      print(e.toString());
+      return [];
+    }
+  }
 }

@@ -25,6 +25,7 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   final TextEditingController searchController = .new();
   List<ProductModel>? products;
+  List<ProductModel>? categories;
   List<ProductModel>? allProducts;
 
   ProductRepo productRepo = ProductRepo();
@@ -37,7 +38,14 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
-  List category = ['All', 'Combo', 'Sliders', 'Classic'];
+  Future<void> getCategory() async {
+    final res = await productRepo.getCategory();
+    setState(() {
+      categories = res.cast<ProductModel>();
+    });
+  }
+
+  // List category = ['All', 'Combo', 'Sliders', 'Classic'];
   int selectedIndex = 0;
 
   UserModel? userModel;
@@ -61,6 +69,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     getProfileData();
+    getCategory();
     getProduct();
     super.initState();
   }
@@ -91,7 +100,7 @@ class _HomeViewState extends State<HomeView> {
                         userImage:
                             userModel?.image.toString() ??
                             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxIM0GFCH1NdjwHQAMNDUW9NbcIzI_KWuQjA&s",
-                        userName: userModel?.name ?? "omran",
+                        userName: userModel?.name ?? "Guest User",
                       ),
                       Gap(20),
                       SearchField(
@@ -120,9 +129,10 @@ class _HomeViewState extends State<HomeView> {
                     horizontal: 15,
                     vertical: 5,
                   ),
+
                   child: CategoryHome(
                     selectedIndex: selectedIndex,
-                    category: category,
+                    category: categories ?? [],
                   ),
                 ),
               ),
