@@ -96,6 +96,7 @@ class _HomeViewState extends State<HomeView> {
                             builder: (c) {
                               return ProductDetailsView(
                                 productImage: product.image,
+                                productId: product.id,
                               );
                             },
                           ),

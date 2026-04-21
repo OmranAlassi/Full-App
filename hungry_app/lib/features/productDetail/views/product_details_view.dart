@@ -1,7 +1,8 @@
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:full_app/core/network/api_error.dart';
+import 'package:full_app/features/cart/data/cart_model.dart';
+import 'package:full_app/features/cart/data/cart_repo.dart';
 import 'package:full_app/features/home/data/model/topping_model.dart';
 import 'package:full_app/features/home/data/repo/product_repo.dart';
 import 'package:full_app/features/productDetail/widgets/spicy_slider.dart';
@@ -12,8 +13,13 @@ import 'package:gap/gap.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class ProductDetailsView extends StatefulWidget {
-  const ProductDetailsView({super.key, required this.productImage});
+  const ProductDetailsView({
+    super.key,
+    required this.productImage,
+    required this.productId,
+  });
   final String productImage;
+  final int productId;
 
   @override
   State<ProductDetailsView> createState() => _ProductDetailsViewState();
@@ -21,8 +27,10 @@ class ProductDetailsView extends StatefulWidget {
 
 class _ProductDetailsViewState extends State<ProductDetailsView> {
   double value = 0.5;
-  int? selectedToppingIndex;
-
+  bool isLoading = false;
+  List<int> selectedTopping = [];
+  List<int> selectedOptions = [];
+  CartRepo cartRepo = CartRepo();
   ProductRepo productRepo = ProductRepo();
 
   List<ToppingModel>? toppings;
@@ -86,20 +94,31 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: List.generate(toppings?.length ?? 4, (index) {
-                      final isSelected = selectedToppingIndex == index;
                       final topping = toppings?[index];
+                      final id = topping?.id ?? 1;
+                      final isSelected = selectedTopping.contains(id);
                       if (topping == null) {
                         return CupertinoActivityIndicator();
                       }
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         child: ToppingCard(
+                          color: isSelected
+                              ? Colors.green
+                              : Colors.red.withOpacity(0.7),
                           imageUrl: topping.image,
                           name: topping.name,
                           onAdd: () {
                             setState(() {
-                              selectedToppingIndex = index;
+                              if (isSelected) {
+                                selectedTopping.removeAt(id);
+                              } else {
+                                selectedTopping.contains(id);
+                              }
                             });
+                            // setState(() {
+                            //   selectedToppingIndex = [index];
+                            // });
                           },
                         ),
                       );
@@ -114,19 +133,27 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: List.generate(options?.length ?? 4, (index) {
-                      final isSelected = selectedToppingIndex == index;
                       final option = options?[index];
+                      final id = option?.id ?? 1;
+                      final isSelected = selectedOptions.contains(id);
                       if (option == null) {
                         return CupertinoActivityIndicator();
                       }
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         child: ToppingCard(
+                          color: isSelected
+                              ? Colors.green
+                              : Colors.red.withOpacity(0.7),
                           imageUrl: option.image,
                           name: option.name,
                           onAdd: () {
                             setState(() {
-                              selectedToppingIndex = index;
+                              if (isSelected) {
+                                selectedOptions.removeAt(id);
+                              } else {
+                                selectedOptions.contains(id);
+                              }
                             });
                           },
                         ),
@@ -134,12 +161,11 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                     }),
                   ),
                 ),
-                Gap(200),
               ],
             ),
           ),
         ),
-      
+
         bottomSheet: Container(
           height: 120,
           decoration: BoxDecoration(
@@ -166,7 +192,41 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                     CustomText(text: '\$18.9', size: 24),
                   ],
                 ),
-                CustomButton(text: 'Add To Cart', onTap: () {}, width: 200),
+
+                isLoading
+                    ? CupertinoActivityIndicator()
+                    : CustomButton(
+                        text: 'Add To Cart',
+                        onTap: () async {
+                          try {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            final cartItem = CartModel(
+                              productId: widget.productId,
+                              qty: 1,
+                              spicy: value,
+                              topping: selectedTopping,
+                              options: selectedOptions,
+                            );
+                            await cartRepo.addToCart(
+                              CartRequestModel(items: [cartItem]),
+                            );
+                            setState(() {
+                              isLoading = false;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Added To Successfully')),
+                            );
+                          } catch (e) {
+                            setState(() {
+                              isLoading = false;
+                            });
+                            throw ApiError(message: e.toString());
+                          }
+                        },
+                        width: 200,
+                      ),
               ],
             ),
           ),

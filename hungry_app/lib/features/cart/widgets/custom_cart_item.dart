@@ -4,8 +4,8 @@ import 'package:full_app/core/const/app_color.dart';
 import 'package:full_app/shared/custom_text.dart';
 import 'package:gap/gap.dart';
 
-class CartItem extends StatelessWidget {
-  const CartItem({
+class CustomCartItem extends StatelessWidget {
+  const CustomCartItem({
     super.key,
     required this.image,
     required this.text,
@@ -29,14 +29,15 @@ class CartItem extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(child: Image.asset(image, width: 120, height: 120)),
-                Gap(15),
-                CustomText(text: text, weight: FontWeight.bold),
-                CustomText(text: desc),
-              ],
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(child: Image.network(image, width: 80)),
+                  CustomText(text: text, weight: FontWeight.bold, size: 14),
+                  CustomText(text: desc, size: 13),
+                ],
+              ),
             ),
             Column(
               children: [
