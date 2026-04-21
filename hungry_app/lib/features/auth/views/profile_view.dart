@@ -10,6 +10,7 @@ import 'package:full_app/features/auth/data/auth_repo.dart';
 import 'package:full_app/features/auth/data/user_model.dart';
 import 'package:full_app/features/auth/views/login_view.dart';
 import 'package:full_app/features/auth/widgets/custom_user_txt_field.dart';
+import 'package:full_app/shared/custom_btn.dart';
 import 'package:full_app/shared/custom_button.dart';
 import 'package:full_app/shared/custom_snack_bar.dart';
 import 'package:full_app/shared/custom_text.dart';
@@ -34,6 +35,7 @@ class _ProfileViewState extends State<ProfileView> {
   UserModel? userModel;
   String? selectedImage;
   bool isLoading = false;
+  //----------------------
   bool isGuest = false;
 
   Future<void> autoLogin() async {
@@ -374,7 +376,31 @@ class _ProfileViewState extends State<ProfileView> {
         ),
       );
     } else if (isGuest) {
-      return Center(child: CustomText(text: 'Guest Mode'));
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          spacing: 55,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(child: CustomText(text: 'Guest Mode')),
+            CustomAuthBtn(
+              color: AppColor.primary,
+              text: 'Go To Login',
+              textColor: Colors.white,
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return LoginView();
+                    },
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      );
     }
     return SizedBox();
   }

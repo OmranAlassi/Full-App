@@ -23,13 +23,13 @@ class ApiExceptions {
     print(data);
 
     switch (error.type) {
-      case DioExceptionType.connectionTimeout:
+      case DioError.connectionTimeout:
         return ApiError(
           message: 'ConnectionTimeout. Please check your internet Connection',
         );
-      case DioExceptionType.sendTimeout:
+      case DioError.sendTimeout:
         return ApiError(message: 'Request timeout. Please try again');
-      case DioExceptionType.receiveTimeout:
+      case DioError.receiveTimeout:
         return ApiError(message: 'Response timeout. Please try again');
       // case DioExceptionType.badResponse:
       //   return ApiError(message: error.toString());

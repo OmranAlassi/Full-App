@@ -17,9 +17,11 @@ class ProductDetailsView extends StatefulWidget {
     super.key,
     required this.productImage,
     required this.productId,
+    required this.productPrice,
   });
   final String productImage;
   final int productId;
+  final String productPrice;
 
   @override
   State<ProductDetailsView> createState() => _ProductDetailsViewState();
@@ -188,8 +190,11 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomText(text: 'Total', size: 15),
-                    CustomText(text: '\$18.9', size: 24),
+                    CustomText(text: 'Burger price', size: 15),
+                    CustomText(
+                      text: '\$${widget.productPrice}??"0.0',
+                      size: 24,
+                    ),
                   ],
                 ),
 

@@ -8,12 +8,15 @@ class ApiService {
   //CRUD METHODS
 
   //GET
-  Future<dynamic> get(String endPoint) async {
+  Future<dynamic> get(String endPoint, {dynamic param}) async {
     try {
-      final response = await _dioClient.dio.get(endPoint);
+      final response = await _dioClient.dio.get(
+        endPoint,
+        queryParameters: param,
+      );
       return response.data;
-    } on DioExceptionType catch (e) {
-      return ApiExceptions.handleError(e as DioException);
+    } on DioError catch (e) {
+      return ApiExceptions.handleError(e);
     }
   }
 
@@ -22,8 +25,8 @@ class ApiService {
     try {
       final response = await _dioClient.dio.post(endPoint, data: body);
       return response.data;
-    } on DioExceptionType catch (e) {
-      return ApiExceptions.handleError(e as DioException);
+    } on DioError catch (e) {
+      return ApiExceptions.handleError(e);
     }
   }
 
@@ -32,8 +35,8 @@ class ApiService {
     try {
       final response = await _dioClient.dio.put(endPoint, data: body);
       return response.data;
-    } on DioExceptionType catch (e) {
-      return ApiExceptions.handleError(e as DioException);
+    } on DioError catch (e) {
+      return ApiExceptions.handleError(e);
     }
   }
 
@@ -50,8 +53,8 @@ class ApiService {
         queryParameters: params,
       );
       return response.data;
-    } on DioExceptionType catch (e) {
-      return ApiExceptions.handleError(e as DioException);
+    } on DioError catch (e) {
+      return ApiExceptions.handleError(e);
     }
   }
 }

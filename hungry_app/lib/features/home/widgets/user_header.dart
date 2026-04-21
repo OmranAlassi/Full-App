@@ -6,8 +6,12 @@ import 'package:full_app/shared/custom_text.dart';
 import 'package:gap/gap.dart';
 
 class UserHeader extends StatelessWidget {
-  const UserHeader({super.key});
-
+  const UserHeader({
+    super.key,
+    required this.userName,
+    required this.userImage,
+  });
+  final String userName, userImage;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -25,7 +29,7 @@ class UserHeader extends StatelessWidget {
             ),
             Gap(5),
             CustomText(
-              text: 'Hello, Omran',
+              text: userName,
               size: 18,
               weight: FontWeight.w500,
               color: Colors.grey.shade500,
@@ -34,9 +38,14 @@ class UserHeader extends StatelessWidget {
         ),
         Spacer(),
         CircleAvatar(
-          radius: 31,
-          backgroundColor: AppColor.primary,
-          child: Icon(CupertinoIcons.person, color: Colors.white),
+          radius: 30,
+          backgroundColor: Colors.white,
+          child: ClipRRect(
+            borderRadius: BorderRadiusGeometry.circular(30),
+            child: Image.network(userImage),
+          ),
+
+          //  Icon(CupertinoIcons.person, color: Colors.white),
         ),
       ],
     );

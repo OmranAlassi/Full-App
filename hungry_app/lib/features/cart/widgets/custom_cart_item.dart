@@ -7,6 +7,7 @@ import 'package:gap/gap.dart';
 class CustomCartItem extends StatelessWidget {
   const CustomCartItem({
     super.key,
+    required this.isLoading,
     required this.image,
     required this.text,
     required this.desc,
@@ -15,6 +16,7 @@ class CustomCartItem extends StatelessWidget {
     this.onRemove,
     required this.number,
   });
+  final bool isLoading;
   final String image, text, desc;
   final Function()? onAdd;
   final Function()? onMin;
@@ -76,9 +78,14 @@ class CustomCartItem extends StatelessWidget {
                       color: AppColor.primary,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Center(
-                      child: CustomText(text: 'Remove', color: Colors.white),
-                    ),
+                    child: isLoading
+                        ? CupertinoActivityIndicator()
+                        : Center(
+                            child: CustomText(
+                              text: 'Remove',
+                              color: Colors.white,
+                            ),
+                          ),
                   ),
                 ),
               ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:full_app/features/auth/views/login_view.dart';
+import 'package:full_app/features/cart/views/cart_view.dart';
 import 'package:full_app/splash.dart';
 
 void main() async {
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
       ),
       // theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-      home: LoginView(),
+      home: SplashView(),
     );
   }
 }

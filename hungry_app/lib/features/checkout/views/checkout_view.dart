@@ -1,20 +1,47 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:full_app/core/const/app_color.dart';
+import 'package:full_app/core/network/api_error.dart';
+import 'package:full_app/features/auth/data/auth_repo.dart';
+import 'package:full_app/features/auth/data/user_model.dart';
 import 'package:full_app/features/checkout/widgets/order_details_widget.dart';
 import 'package:full_app/shared/custom_button.dart';
+import 'package:full_app/shared/custom_snack_bar.dart';
 import 'package:full_app/shared/custom_text.dart';
 import 'package:gap/gap.dart';
 
 class CheckoutView extends StatefulWidget {
-  const CheckoutView({super.key});
-
+  const CheckoutView({super.key, required this.totalPrice});
+  final String totalPrice;
   @override
   State<CheckoutView> createState() => _CheckoutViewState();
 }
 
 class _CheckoutViewState extends State<CheckoutView> {
   String selectedMethod = 'Cash';
+  UserModel? userModel;
+  AuthRepo authRepo = AuthRepo();
+
+  Future<void> getProfileData() async {
+    try {
+      final user = await authRepo.getProfileData();
+      setState(() {
+        userModel = user;
+      });
+    } catch (e) {
+      String errorMsg = "Error in Profile";
+      if (e is ApiError) {
+        errorMsg = e.message;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(customSnackBar(errorMsg));
+    }
+  }
+
+  @override
+  void initState() {
+    getProfileData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +69,11 @@ class _CheckoutViewState extends State<CheckoutView> {
               ),
               Gap(10),
               OrderDetailsWidget(
-                order: '2.2',
+                order: widget.totalPrice,
                 taxes: '55',
                 fees: '55.33',
-                total: '120',
+                total: (double.parse(widget.totalPrice) + 3.50 + 40.33)
+                    .toStringAsFixed(2),
               ),
               Gap(80),
               CustomText(
@@ -84,32 +112,40 @@ class _CheckoutViewState extends State<CheckoutView> {
               ),
 
               Gap(10),
-
-              ListTile(
-                onTap: () => setState(() => selectedMethod = 'Visa'),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadiusGeometry.circular(8),
-                ),
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 16,
-                ),
-                tileColor: Color(0XffF3F4F6),
-                leading: Image.asset('assets/icon/image 13.png', width: 50),
-                title: CustomText(text: 'Debit card', color: Color(0Xff3C2F2F)),
-                subtitle: CustomText(
-                  text: '3566 **** **** 0505',
-                  color: Color(0Xff808080),
-                ),
-                trailing: Radio<String>(
-                  activeColor: Colors.grey.shade500,
-                  value: 'Visa',
-                  // ignore: deprecated_member_use
-                  groupValue: selectedMethod,
-                  // ignore: deprecated_member_use
-                  onChanged: (value) => setState(() => selectedMethod = value!),
-                ),
-              ),
+              userModel?.visa == null
+                  ? SizedBox.shrink()
+                  : ListTile(
+                      onTap: () => setState(() => selectedMethod = 'Visa'),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadiusGeometry.circular(8),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 16,
+                      ),
+                      tileColor: Color(0XffF3F4F6),
+                      leading: Image.asset(
+                        'assets/icon/image 13.png',
+                        width: 50,
+                      ),
+                      title: CustomText(
+                        text: 'Debit card',
+                        color: Color(0Xff3C2F2F),
+                      ),
+                      subtitle: CustomText(
+                        text: userModel?.visa ?? '3566 **** **** 0505',
+                        color: Color(0Xff808080),
+                      ),
+                      trailing: Radio<String>(
+                        activeColor: Colors.grey.shade500,
+                        value: 'Visa',
+                        // ignore: deprecated_member_use
+                        groupValue: selectedMethod,
+                        // ignore: deprecated_member_use
+                        onChanged: (value) =>
+                            setState(() => selectedMethod = value!),
+                      ),
+                    ),
 
               Gap(5),
               Row(
@@ -129,7 +165,6 @@ class _CheckoutViewState extends State<CheckoutView> {
       ),
 
       bottomSheet: Container(
-        
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [
@@ -152,7 +187,11 @@ class _CheckoutViewState extends State<CheckoutView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomText(text: 'Total', size: 15),
-                  CustomText(text: '\$18.9', size: 24),
+                  CustomText(
+                    text:
+                        '\$ ${(double.parse(widget.totalPrice) + 3.50 + 40.33).toStringAsFixed(2)}',
+                    size: 20,
+                  ),
                 ],
               ),
               CustomButton(

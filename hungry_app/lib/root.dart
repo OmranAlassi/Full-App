@@ -29,11 +29,13 @@ class _RootState extends State<Root> {
     return PopScope(
       canPop: false,
       child: Scaffold(
+        //IndexedStack(index: currentScreen, children: screens),
         body: PageView(
           controller: controller,
           physics: NeverScrollableScrollPhysics(),
           children: screens,
         ),
+
         bottomNavigationBar: Container(
           padding: EdgeInsets.all(10),
           decoration: BoxDecoration(

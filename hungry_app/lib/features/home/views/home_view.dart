@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:full_app/core/network/api_error.dart';
+import 'package:full_app/features/auth/data/auth_repo.dart';
+import 'package:full_app/features/auth/data/user_model.dart';
 import 'package:full_app/features/home/data/model/product_model.dart';
 import 'package:full_app/features/home/data/repo/product_repo.dart';
 import 'package:full_app/features/home/widgets/card_item.dart';
@@ -7,6 +10,7 @@ import 'package:full_app/features/home/widgets/category_home.dart';
 import 'package:full_app/features/home/widgets/search_field.dart';
 import 'package:full_app/features/home/widgets/user_header.dart';
 import 'package:full_app/features/productDetail/views/product_details_view.dart';
+import 'package:full_app/shared/custom_snack_bar.dart';
 
 import 'package:gap/gap.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -19,12 +23,16 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  final TextEditingController searchController = .new();
   List<ProductModel>? products;
+  List<ProductModel>? allProducts;
+
   ProductRepo productRepo = ProductRepo();
 
   Future<void> getProduct() async {
     final res = await productRepo.getProducts();
     setState(() {
+      allProducts = res.cast<ProductModel>();
       products = res.cast<ProductModel>();
     });
   }
@@ -32,8 +40,27 @@ class _HomeViewState extends State<HomeView> {
   List category = ['All', 'Combo', 'Sliders', 'Classic'];
   int selectedIndex = 0;
 
+  UserModel? userModel;
+  AuthRepo authRepo = AuthRepo();
+
+  Future<void> getProfileData() async {
+    try {
+      final user = await authRepo.getProfileData();
+      setState(() {
+        userModel = user;
+      });
+    } catch (e) {
+      String errorMsg = "Error in Profile";
+      if (e is ApiError) {
+        errorMsg = e.message;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(customSnackBar(errorMsg));
+    }
+  }
+
   @override
   void initState() {
+    getProfileData();
     getProduct();
     super.initState();
   }
@@ -59,7 +86,29 @@ class _HomeViewState extends State<HomeView> {
                 flexibleSpace: Padding(
                   padding: const EdgeInsets.only(top: 38, right: 20, left: 20),
                   child: Column(
-                    children: [UserHeader(), Gap(20), SearchField(), Gap(10)],
+                    children: [
+                      UserHeader(
+                        userImage:
+                            userModel?.image.toString() ??
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxIM0GFCH1NdjwHQAMNDUW9NbcIzI_KWuQjA&s",
+                        userName: userModel?.name ?? "omran",
+                      ),
+                      Gap(20),
+                      SearchField(
+                        controller: searchController,
+                        onChanged: (v) {
+                          final query = v.toLowerCase();
+                          setState(() {
+                            products = allProducts!
+                                .where(
+                                  (e) => e.name.toLowerCase().contains(query),
+                                )
+                                .toList();
+                          });
+                        },
+                      ),
+                      Gap(10),
+                    ],
                   ),
                 ),
               ),
@@ -97,6 +146,7 @@ class _HomeViewState extends State<HomeView> {
                               return ProductDetailsView(
                                 productImage: product.image,
                                 productId: product.id,
+                                productPrice: product.price,
                               );
                             },
                           ),

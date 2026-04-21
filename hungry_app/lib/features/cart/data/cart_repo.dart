@@ -8,10 +8,9 @@ class CartRepo {
   Future<void> addToCart(CartRequestModel cartData) async {
     try {
       final res = await apiService.post('/cart/add', cartData.toJson());
-      if (res is ApiError) {
-        throw ApiError(message: res.message);
+      if (res['code'] == 200 && res['data'] == null) {
+        throw ApiError(message: res['message']);
       }
-      throw ApiError(message: 'Product Added Successfully To Cart');
     } catch (e) {
       throw ApiError(message: e.toString());
     }
@@ -28,6 +27,7 @@ class CartRepo {
     } catch (e) {
       throw ApiError(message: e.toString());
     }
+  
   }
 
   //delete CartItem
@@ -35,7 +35,7 @@ class CartRepo {
     try {
       final res = await apiService.delete('/cart/remove/$id', {});
       if (res['code'] == 200 && res['data'] == null) {
-        throw ApiError(message: res['Item deleted from cart']);
+        throw ApiError(message: res['message']);
       }
     } catch (e) {
       ApiError(message: "Remove Item from Cart: ${e.toString()}");
