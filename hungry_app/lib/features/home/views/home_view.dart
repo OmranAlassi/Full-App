@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:full_app/core/network/api_error.dart';
@@ -27,6 +29,8 @@ class _HomeViewState extends State<HomeView> {
   List<ProductModel>? products;
   List<ProductModel>? categories;
   List<ProductModel>? allProducts;
+  // Timer in search
+  Timer? _debounce;
   //Infinite scroll
   // int page = 1;
   // bool isLoadingMore = false;
@@ -101,6 +105,13 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
   }
 
+  // Timer in search
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -132,16 +143,33 @@ class _HomeViewState extends State<HomeView> {
                       Gap(20),
                       SearchField(
                         controller: searchController,
+                        // Timer in search
                         onChanged: (v) {
-                          final query = v.toLowerCase();
-                          setState(() {
-                            products = allProducts!
-                                .where(
-                                  (e) => e.name.toLowerCase().contains(query),
-                                )
-                                .toList();
+                          if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+                          _debounce = Timer(Duration(milliseconds: 500), () {
+                            final query = v.toLowerCase();
+
+                            setState(() {
+                              products = allProducts!
+                                  .where(
+                                    (e) => e.name.toLowerCase().contains(query),
+                                  )
+                                  .toList();
+                            });
                           });
                         },
+                        //no Timer
+                        // onChanged: (v) {
+                        //   final query = v.toLowerCase();
+                        //   setState(() {
+                        //     products = allProducts!
+                        //         .where(
+                        //           (e) => e.name.toLowerCase().contains(query),
+                        //         )
+                        //         .toList();
+                        //   });
+                        // },
                       ),
                       Gap(10),
                     ],
