@@ -10,9 +10,7 @@ import 'package:full_app/features/cart/widgets/custom_cart_item.dart';
 import 'package:full_app/features/checkout/views/checkout_view.dart';
 import 'package:full_app/shared/custom_btn.dart';
 import 'package:full_app/shared/custom_button.dart';
-import 'package:full_app/shared/custom_snack_bar.dart';
 import 'package:full_app/shared/custom_text.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 class CartView extends StatefulWidget {
   const CartView({super.key});

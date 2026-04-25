@@ -27,7 +27,11 @@ class _HomeViewState extends State<HomeView> {
   List<ProductModel>? products;
   List<ProductModel>? categories;
   List<ProductModel>? allProducts;
-
+  //Infinite scroll
+  // int page = 1;
+  // bool isLoadingMore = false;
+  // bool hasMore = true;
+  final ScrollController scrollController = ScrollController();
   ProductRepo productRepo = ProductRepo();
 
   Future<void> getProduct() async {
@@ -37,6 +41,22 @@ class _HomeViewState extends State<HomeView> {
       products = res.cast<ProductModel>();
     });
   }
+  //Infinite scroll
+  // Future<void> getProduct() async {
+  //   if (isLoadingMore || !hasMore) return;
+  //   setState(() => isLoadingMore = true);
+  //   final res = await productRepo.getProducts(page: page);
+  //   setState(() {
+  //     if (res.isEmpty) {
+  //       hasMore = false;
+  //     } else {
+  //       page++;
+  //       products?.addAll(res.cast<ProductModel>());
+  //       allProducts?.addAll(res.cast<ProductModel>());
+  //     }
+  //     isLoadingMore = false;
+  //   });
+  // }
 
   Future<void> getCategory() async {
     final res = await productRepo.getCategory();
@@ -71,6 +91,13 @@ class _HomeViewState extends State<HomeView> {
     getProfileData();
     getCategory();
     getProduct();
+    //Infinite scroll
+    // scrollController.addListener(() {
+    //   if (scrollController.position.pixels >=
+    //       scrollController.position.maxScrollExtent - 200) {
+    //     getProduct();
+    //   }
+    // });
     super.initState();
   }
 
@@ -170,6 +197,7 @@ class _HomeViewState extends State<HomeView> {
                       );
                     },
                   ),
+
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     childAspectRatio: 0.68,
@@ -177,6 +205,45 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 ),
               ),
+              //Infinite scroll
+              // GridView.builder(
+              //   controller: scrollController,
+              //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              //     crossAxisCount: 2,
+              //     childAspectRatio: 0.75,
+              //   ),
+              //   itemCount: products?.length ?? 0,
+              //   itemBuilder: (context, index) {
+              //     final product = products?[index];
+              //     if (product == null) return CupertinoActivityIndicator();
+
+              //     return GestureDetector(
+              //       onTap: () => Navigator.push(
+              //         context,
+              //         MaterialPageRoute(
+              //           builder: (c) {
+              //             return ProductDetailsView(
+              //               productImage: product.image,
+              //               productId: product.id,
+              //               productPrice: product.price,
+              //             );
+              //           },
+              //         ),
+              //       ),
+              //       child: CardItem(
+              //         image: product.image,
+              //         text: product.name,
+              //         desc: product.desc,
+              //         rate: product.rate,
+              //       ),
+              //     );
+              //   },
+              // ),
+              // if (isLoadingMore)
+              //   Padding(
+              //     padding: EdgeInsets.all(16),
+              //     child: CupertinoActivityIndicator(),
+              //   ),
             ],
           ),
         ),

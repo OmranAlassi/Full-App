@@ -20,6 +20,19 @@ class ProductRepo {
     }
   }
 
+  //Infinite scroll
+  // Future<List<ProductModel?>> getProducts({int page = 1}) async {
+  //   try {
+  //     final response = await apiService.get('/products?page=$page');
+  //     return (response['data'] as List)
+  //         .map((product) => ProductModel.fromJson(product))
+  //         .toList();
+  //   } catch (e) {
+  //     print(e.toString());
+  //     return [];
+  //   }
+  // }
+
   //get Topping
   Future<List<ToppingModel?>> getToppings() async {
     try {
